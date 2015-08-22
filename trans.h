@@ -47,7 +47,7 @@ static inline void trans_REF_UNROLL(const TYPE (*restrict A)[M], TYPE (*restrict
 
 #pragma GCC push_options
 #pragma GCC optimize ("unroll-loops")
-static inline void trans_UNROLL_AND_JAM__(const TYPE (*restrict A)[M], TYPE (*restrict B)[N],
+static inline void trans_REF_UNROLL_AND_JAM__(const TYPE (*restrict A)[M], TYPE (*restrict B)[N],
         size_t i, size_t j, size_t unroll)
 {
     for (size_t k=0; k<unroll; k++) {
@@ -56,16 +56,16 @@ static inline void trans_UNROLL_AND_JAM__(const TYPE (*restrict A)[M], TYPE (*re
 }
 #pragma GCC pop_options
 
-static inline void trans_UNROLL_AND_JAM(const TYPE (*restrict A)[M], TYPE (*restrict B)[N])
+static inline void trans_REF_UNROLL_AND_JAM(const TYPE (*restrict A)[M], TYPE (*restrict B)[N])
 {
     size_t i;
     for (i=0; i<=N-UNROLL_N; i+=UNROLL_N) {
         for (size_t j=0; j<M; j++) {
-            trans_UNROLL_AND_JAM__(A, B, i, j, UNROLL_N);
+            trans_REF_UNROLL_AND_JAM__(A, B, i, j, UNROLL_N);
         }
     }
     for (size_t j=0; j<M; j++) {
-        trans_UNROLL_AND_JAM__(A, B, i, j, N%UNROLL_N);
+        trans_REF_UNROLL_AND_JAM__(A, B, i, j, N%UNROLL_N);
     }
 }
 

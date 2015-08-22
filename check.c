@@ -41,7 +41,7 @@ int main(void)
 
     CHECK(trans_REF, A, B);
     CHECK(trans_REF_UNROLL, A, B);
-    CHECK(trans_UNROLL_AND_JAM, A, B);
+    CHECK(trans_REF_UNROLL_AND_JAM, A, B);
     CHECK(trans_LINEAR, A, B);
     CHECK(trans_LINEAR_UNROLL, A, B);
     CHECK_(trans_INPLACE, A, B, A);
