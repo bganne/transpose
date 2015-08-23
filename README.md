@@ -2,6 +2,8 @@
 
 Various experiments with non-square matrix transpose (NxM), including in-place
 transpose.
+If interested, more in-depth analysis available here: http://www.benou.fr/~ben/non-square-matrix-in-place-transpose.html
+
 The input matrix 'A' is defined as a NxM matrix in row-major (C array semantic,
 A[N][M]).
 The output matrix 'B' is obviously a MxN matrix (B[M][N]).
