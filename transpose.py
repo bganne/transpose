@@ -107,7 +107,7 @@ for clen, clist in cycles:
         print TAB + "{"
         TAB += " " * 4
         print TAB + "/* take care of remaining for cycles of len %i (cf. cycle%i) */" % (clen, clen)
-        TAB = unroll1(TAB, clen, len(clist) % UNROLL, "%i", ctype, M, N, "(%i-%i+1)+" % (len(clist), unroll))
+        TAB = unroll1(TAB, clen, len(clist) % UNROLL, "%i", ctype, M, N, "(%i-%i)+" % (len(clist), len(clist)%unroll))
 TAB = " " * (len(TAB)-4);
 print TAB + "}"
 print
