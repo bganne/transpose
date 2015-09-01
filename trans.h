@@ -75,33 +75,45 @@ static inline void trans_UNROLL_AND_JAM(const TYPE (*restrict A)[M], TYPE (*rest
 #pragma GCC push_options
 #pragma GCC optimize ("unroll-loops")
 static inline void trans_BLOCK__(const TYPE (*restrict A)[M], TYPE (*restrict B)[N],
-        size_t i, size_t j, size_t k, size_t unroll)
+        size_t i, size_t j, size_t k, size_t m)
 {
-    for (size_t l=0; l<unroll; l++) {
+    for (size_t l=0; l<m; l++) {
         B[j+l][i+k] = A[i+k][j+l];
     }
 }
 #pragma GCC pop_options
 
+static inline void trans_BLOCK_M__(const TYPE (*restrict A)[M], TYPE (*restrict B)[N],
+		size_t i, size_t j, size_t n, size_t m)
+{
+	for (size_t k=0; k<n; k++) {
+		trans_BLOCK__(A, B, i, j, k, m);
+	}
+}
+
+static inline void trans_BLOCK_N__(const TYPE (*restrict A)[M], TYPE (*restrict B)[N],
+		size_t i, size_t n)
+{
+	size_t j;
+	for (j=0; j<=M-BLOCK_M; j+=BLOCK_M) {
+		trans_BLOCK_M__(A, B, i, j, n, BLOCK_M);
+	}
+	trans_BLOCK_M__(A, B, i, j, n, M%BLOCK_M);
+}
+
 static inline void trans_BLOCK(const TYPE (*restrict A)[M], TYPE (*restrict B)[N])
 {
-    size_t i, j;
-    for (i=0; i<=N-UNROLL_N; i+=BLOCK_N) {
-        for (j=0; j<=M-UNROLL_M; j+=BLOCK_M) {
-            for (size_t k=0; k<BLOCK_N; k++) {
-                trans_BLOCK__(A, B, i, j, k, BLOCK_M);
-            }
-        }
+    size_t i;
+    for (i=0; i<=N-BLOCK_N; i+=BLOCK_N) {
+		trans_BLOCK_N__(A, B, i, BLOCK_N);
     }
-    for (size_t k=0; k<N%BLOCK_N; k++) {
-        trans_BLOCK__(A, B, i, j, k, M%BLOCK_M);
-    }
+	trans_BLOCK_N__(A, B, i, N%BLOCK_N);
 }
 
 static inline void trans_LINEAR(const TYPE *restrict A, TYPE *restrict B)
 {
     for (size_t i=0; i<N*M; i++) {
-        B[(i % M) * N + i / M] = A[i]; 
+        B[(i % M) * N + i / M] = A[i];
     }
 }
 
@@ -111,7 +123,7 @@ static inline void trans_LINEAR_UNROLL__(const TYPE *restrict A, TYPE *restrict 
         size_t i, size_t unroll)
 {
     for (size_t k=0; k<unroll; k++) {
-        B[((i+k) % M) * N + (i+k) / M] = A[i+k]; 
+        B[((i+k) % M) * N + (i+k) / M] = A[i+k];
     }
 }
 #pragma GCC pop_options
